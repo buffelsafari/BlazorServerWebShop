@@ -48,7 +48,7 @@ namespace CosmosDBData
             ContainerProperties containerProperties = new ContainerProperties()
             {
                 Id = productsContainerId,
-                PartitionKeyPath = "/type/name",
+                PartitionKeyPath = "/path/name",
                 IndexingPolicy = new IndexingPolicy()
                 {
                     Automatic = false,
@@ -265,7 +265,7 @@ namespace CosmosDBData
         }
 
 
-        public async Task<IEnumerable<ProductDTO>> GetProducts(string path, string search, ProductSorting sorting, int offset, int limit)
+        public async Task<IEnumerable<T>> GetProducts<T>(string path, string search, ProductSorting sorting, int offset, int limit)
         {
             Debug.WriteLine("Getting products from database...");  // todo watch for extra calls to db
             string order = "";
@@ -287,13 +287,13 @@ namespace CosmosDBData
                                     
             // todo maybe change search from like to contains
             QueryDefinition queryDefinition = new QueryDefinition($"SELECT * FROM c WHERE STARTSWITH(c.path, '{path}') AND c.name LIKE '{search}%' {order} OFFSET {offset} LIMIT {limit}");
-            FeedIterator<ProductDTO> queryResultSetIterator = products.GetItemQueryIterator<ProductDTO>(queryDefinition);
-            List<ProductDTO> items = new List<ProductDTO>();
+            FeedIterator<T> queryResultSetIterator = products.GetItemQueryIterator<T>(queryDefinition);
+            List<T> items = new List<T>();
 
             while (queryResultSetIterator.HasMoreResults)
             {
-                FeedResponse<ProductDTO> currentResultSet = await queryResultSetIterator.ReadNextAsync();
-                foreach (ProductDTO product in currentResultSet)
+                FeedResponse<T> currentResultSet = await queryResultSetIterator.ReadNextAsync();
+                foreach (T product in currentResultSet)
                 {
                     items.Add(product);                    
                 }

@@ -1,5 +1,4 @@
 ﻿using BlazorServerCrud1.Components.PaginatorComponent;
-using BlazorServerCrud1.ViewModels;
 using CosmosDBData;
 using CosmosDBService.DTO;
 using Microsoft.AspNetCore.Components;
@@ -49,7 +48,7 @@ namespace BlazorServerCrud1.Pages
 
 
         [Parameter]
-        public IEnumerable<ProductModel> Items { get; set; } = new List<ProductModel>();
+        public IEnumerable<ProductDTO> Items { get; set; } = new List<ProductDTO>();
 
 
         private string? _path;
@@ -102,18 +101,18 @@ namespace BlazorServerCrud1.Pages
             
             PaginatorCallback?.Invoke(SelectedPage, await Count(typeCombo));
 
-            var productsDTO = await cosmosDB.GetProducts(typeCombo, SearchWord != null ? SearchWord : "", ProductSorting.name, offset: SelectedPage*ItemsPerPage, limit: ItemsPerPage);
+            Items = await cosmosDB.GetProducts<ProductDTO>(typeCombo, SearchWord != null ? SearchWord : "", ProductSorting.name, offset: SelectedPage*ItemsPerPage, limit: ItemsPerPage);
 
-            Items = productsDTO.Select(p => 
-                new ProductModel
-                {
-                    Id=p.Id,
-                    Name=p.Name,
-                    Path=p.Path,
-                    Price=p.Price,
-                    PriceUnit=p.PriceUnit,
-                    Image=p.Image,
-                });
+            //Items = productsDTO.Select(p => 
+            //    new ProductModel
+            //    {
+            //        Id=p.Id,
+            //        Name=p.Name,
+            //        Path=p.Path,
+            //        Price=p.Price,
+            //        PriceUnit=p.PriceUnit,
+            //        Image=p.Image,
+            //    });
 
             //Items = new List<ProductModel>();
             //foreach (ProductDTO p in productsDTO)

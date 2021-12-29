@@ -1,5 +1,4 @@
-﻿using BlazorServerCrud1.ViewModels;
-using CosmosDBData;
+﻿using CosmosDBData;
 using CosmosDBService.DTO;
 using Microsoft.AspNetCore.Components;
 using System.Diagnostics;
