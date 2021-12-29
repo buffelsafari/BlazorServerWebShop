@@ -1,0 +1,29 @@
+﻿
+
+
+<div class="nav-item px-3" @onclick="()=>expand = !expand">
+    <NavLink class="nav-link" href=@(Root.Link) >
+        <span class="oi oi-list-rich" aria-hidden="true"></span>@Root.Name
+    </NavLink>
+</div>
+
+
+<div style="margin-left:20px; color:yellow;" >
+
+    @if (expand)
+    {
+        @foreach (MenuNode node in Root.Children)
+        {
+            <MenuTree Root=node></MenuTree>
+
+        }
+    }
+</div>
+
+@code 
+{
+    private bool expand;
+
+    [Parameter]
+    public MenuNode? Root { get; set; }
+}

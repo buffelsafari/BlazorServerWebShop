@@ -1,0 +1,43 @@
+﻿@using System.Diagnostics
+<h3>Search</h3>
+
+
+<input type="text" @bind-value=@SearchWord @onkeydown="@Enter"/>
+<input type="button" value="Search"/>
+
+
+
+<article>
+    <CascadingValue Value=SearchWord>
+        @ChildContent
+    </CascadingValue>
+</article>
+
+
+@code 
+{
+    [Parameter]
+    public string? SearchWord { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+
+    private void SearchIssues()
+    {
+        Debug.WriteLine("search issues");
+    }
+
+    public void Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            Debug.WriteLine("enter key was pressed");
+        }
+    }
+    
+    
+}

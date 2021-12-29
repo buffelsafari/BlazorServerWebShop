@@ -1,0 +1,123 @@
+﻿@using System.Diagnostics
+
+<div style="width:100%; height:100px;">
+    
+    
+    @foreach(int item in ButtonItems)
+    {
+        if (item == SelectedPage)
+        {
+            <button disabled>@(item+1)</button>
+        }
+        else
+        {
+            <button @onclick="()=> OnClick(item)">@(item+1)</button>
+        }
+        
+    }
+
+    <span>items: @TotalNumberOfItems</span>
+
+
+</div>
+<article>
+
+    <CascadingValue Value=PaginatorCallback IsFixed=true>
+        <CascadingValue Value=ItemsPerPage Name="ItemsPerPage">
+            <CascadingValue Value=SelectedPage Name="SelectedPage">
+                @ChildContent
+            </CascadingValue>
+        </CascadingValue>
+    </CascadingValue>
+
+</article>
+
+@code 
+{
+    private List<int> ButtonItems = new List<int>();
+
+    //[Parameter]
+    //public PaginatorParam? PaginatorCascade {get;set;}
+
+    [Parameter]
+    public int SelectedPage { get; set; }
+
+    [Parameter]
+    public int TotalNumberOfItems { get; set; }
+
+    [Parameter]
+    public int ItemsPerPage { get; set; } 
+
+    [Parameter]
+    public Action<int, int>? PaginatorCallback { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        TotalNumberOfItems = 10;
+        ItemsPerPage = 10;
+        //SelectedPage = 0;
+        PaginatorCallback = tst;
+
+
+        //PaginatorCascade = new PaginatorParam
+        //{
+        //    SelectedPage=1,
+        //    PaginatorCallback = tst
+        //};
+        //PaginatorCascade.PaginatorCallback = tst;
+        return base.OnInitializedAsync();
+    }
+
+    protected override Task OnParametersSetAsync()
+    {
+        ButtonItems.Clear();
+        for (int i = TotalNumberOfItems, j=0; i >0; i-=ItemsPerPage, j++)
+        {
+            ButtonItems.Add(j);
+        }
+        return base.OnParametersSetAsync();
+    }
+
+    private void OnClick(int i)
+    {
+        Debug.WriteLine("hello button in paginator"+i);
+        SelectedPage = i;
+        //OnButtonClick?.Invoke(i);
+    }
+
+    private void tst(int index, int numberOfItems)
+    {
+        
+        bool needsRedraw = false;
+
+        SelectedPage = index;
+
+        Debug.WriteLine("paginator callback");
+
+        if (numberOfItems != TotalNumberOfItems)
+        {
+            TotalNumberOfItems = numberOfItems;
+            needsRedraw = true;
+        }
+                
+        if(needsRedraw)
+        {
+            Redraw();
+        }
+
+
+    }
+
+    private void Redraw()
+    {
+        ButtonItems.Clear();
+        for (int i = TotalNumberOfItems, j=0; i >0; i-=ItemsPerPage, j++)
+        {
+            ButtonItems.Add(j);
+        }
+        StateHasChanged();
+    }
+}

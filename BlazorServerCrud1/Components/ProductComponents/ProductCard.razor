@@ -1,0 +1,29 @@
+﻿@inject NavigationManager NavManager
+
+<div @attributes=@AdditionalAttributes @onclick=OnClick>
+
+    @ChildContent
+    
+</div>
+
+@code 
+{
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public string Name { get; set; }
+
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    protected void OnClick()
+    {
+        object? id;
+        if (AdditionalAttributes.TryGetValue("id", out id))
+        {
+            NavManager.NavigateTo($"/Item/{id}");
+        }
+    }
+}

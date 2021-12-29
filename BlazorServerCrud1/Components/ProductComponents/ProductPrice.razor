@@ -1,0 +1,16 @@
+﻿
+
+<div @attributes=@AdditionalAttributes>
+    <nobr>@ChildContent</nobr>
+</div>
+
+@code 
+{
+    
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, Object>? AdditionalAttributes { get; set; }
+
+}

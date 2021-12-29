@@ -1,0 +1,60 @@
+﻿
+@page "/products/{Type?}/{SubType1?}/{SubType2?}/{SubType3?}"
+
+
+
+@using CosmosDBData
+@using BlazorServerCrud1.Components.ProductComponents
+@using BlazorServerCrud1.Components.PaginatorComponent
+
+@inject ICosmosDBContext cosmosDB;
+
+
+
+<h3>@SearchWord</h3>
+
+
+
+
+
+                     
+      
+
+
+<div class="container-fluid">
+    <div class="row">
+@foreach (var product in Items)
+{
+  
+    <ProductCard id=@product.Id class="product-card" Name=@product.Name>
+        <ProductImage Image=@product.Image style="height:50%; text-align:center;">
+
+        </ProductImage>
+        
+        <ProductTitle style="background-color:green;">
+            @product.Name           
+
+        </ProductTitle>
+        <ProductPrice>
+            @product.Price @product.PriceUnit
+        </ProductPrice> 
+        Hello world!
+    </ProductCard>
+          
+    
+}
+</div>
+</div>
+
+ 
+
+
+
+
+
+
+
+@code 
+{
+    
+}
