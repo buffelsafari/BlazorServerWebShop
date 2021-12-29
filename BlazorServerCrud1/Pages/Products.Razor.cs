@@ -36,23 +36,23 @@ namespace BlazorServerCrud1.Pages
 
 
         [Parameter]
-        public string? Type { get; set; }
+        public string? Path { get; set; }
 
         [Parameter]
-        public string? SubType1 { get; set; }
+        public string? SubPath1 { get; set; }
 
         [Parameter]
-        public string? SubType2 { get; set; }
+        public string? SubPath2 { get; set; }
 
         [Parameter]
-        public string? SubType3 { get; set; }
+        public string? SubPath3 { get; set; }
 
 
         [Parameter]
         public IEnumerable<ProductModel> Items { get; set; } = new List<ProductModel>();
 
 
-        private string? _type;
+        private string? _path;
 
         
 
@@ -62,7 +62,7 @@ namespace BlazorServerCrud1.Pages
             
 
             //SelectedPage = 0;
-            _type = Type;
+            _path = Path;
 
             
 
@@ -78,11 +78,11 @@ namespace BlazorServerCrud1.Pages
 
             
 
-            if (Type != _type)  // todo detect search changes
+            if (Path != _path)  // todo detect search changes
             {
                 SelectedPage = 0;
                 Debug.WriteLine("Type change detected");
-                _type = Type;
+                _path = Path;
                 //StateHasChanged();
                 
             }
@@ -93,10 +93,10 @@ namespace BlazorServerCrud1.Pages
             // todo only db when changes detected
             //TotalCount = await cosmosDB.ValueSQLCount(Type != null ? Type : "", SearchWord != null ? SearchWord : "");            
 
-            string typeCombo = Type != null ? Type + "/" : "";
-            typeCombo += SubType1 != null ? SubType1 + "/" : "";
-            typeCombo += SubType2 != null ? SubType2 + "/" : "";
-            typeCombo += SubType3 != null ? SubType3 + "/" : "";
+            string typeCombo = Path != null ? Path + "/" : "";
+            typeCombo += SubPath1 != null ? SubPath1 + "/" : "";
+            typeCombo += SubPath2 != null ? SubPath2 + "/" : "";
+            typeCombo += SubPath3 != null ? SubPath3 + "/" : "";
 
             Debug.WriteLine("typecombo-------- "+typeCombo);
             
@@ -109,7 +109,7 @@ namespace BlazorServerCrud1.Pages
                 {
                     Id=p.Id,
                     Name=p.Name,
-                    Type=p.Type,
+                    Path=p.Path,
                     Price=p.Price,
                     PriceUnit=p.PriceUnit,
                     Image=p.Image,
@@ -140,9 +140,9 @@ namespace BlazorServerCrud1.Pages
 
         
 
-        private Task<int> Count(string type)
+        private Task<int> Count(string path)
         {            
-            return cosmosDB.ValueSQLCount(type, SearchWord != null ? SearchWord : "");
+            return cosmosDB.ValueSQLCount(path, SearchWord != null ? SearchWord : "");
         }
 
         

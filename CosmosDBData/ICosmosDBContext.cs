@@ -10,9 +10,10 @@ namespace CosmosDBData
     public interface ICosmosDBContext
     {
         
-        Task<IEnumerable<ProductDTO>> GetProducts(string type, string search, ProductSorting sorting, int offset, int limit);
-        Task<int> ValueSQLCount(string type, string search);
-        Task<IEnumerable<string>> GetTypes();
+        Task<IEnumerable<ProductDTO>> GetProducts(string path, string search, ProductSorting sorting, int offset, int limit);
+        Task<int> ValueSQLCount(string path, string search);
+        Task<IEnumerable<string>> GetPaths();
+        Task<T?> GetProduct<T>(string id);
         void GenerateTestDB();
     }
 }

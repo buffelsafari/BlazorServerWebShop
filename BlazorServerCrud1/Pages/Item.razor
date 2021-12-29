@@ -1,9 +1,27 @@
 ﻿@page "/Item/{Id}"
 
+@using CosmosDBData
+@using CosmosDBService.DTO
+
+@inject ICosmosDBContext cosmosDB;
+
+
 <h3>Item @Id</h3>
+@name
 
 @code 
 {
     [Parameter]
     public string? Id { get; set; }
+
+    private string? name;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var product=await cosmosDB.GetProduct<ProductDTO>(Id);
+        name = product.Name;
+
+        await base.OnParametersSetAsync();
+
+    }
 }

@@ -15,8 +15,8 @@ namespace CosmosDBService.DTO
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
         
-        [JsonProperty(PropertyName = "type")]
-        public string Type { get; set; }
+        [JsonProperty(PropertyName = "path")]
+        public string Path { get; set; }
 
         [JsonProperty(PropertyName = "price")]
         public string Price { get; set; }

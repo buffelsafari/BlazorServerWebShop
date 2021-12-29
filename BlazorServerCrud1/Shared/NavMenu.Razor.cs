@@ -22,7 +22,7 @@ namespace BlazorServerCrud1.Shared
 
         protected async override Task OnInitializedAsync()
         {
-            types = await cosmosDB.GetTypes();
+            types = await cosmosDB.GetPaths();
                         
             foreach (string type in types)
             {

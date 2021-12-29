@@ -214,13 +214,13 @@ namespace CosmosDBData
         
 
 
-        private async Task CreateProduct(Container container, string type, string name, string price, string priceUnit, string image)
+        private async Task CreateProduct(Container container, string path, string name, string price, string priceUnit, string image)
         {
             
             await container.CreateItemAsync<ProductDTO>(new ProductDTO
             {
                 Id = Guid.NewGuid().ToString(),
-                Type = type,
+                Path = path,
                 Name = name,
                 Price = price,
                 PriceUnit = priceUnit,
@@ -228,13 +228,15 @@ namespace CosmosDBData
             });
         }   
 
-        public async Task<int> ValueSQLCount(string type, string search)
+        
+
+        public async Task<int> ValueSQLCount(string path, string search)
         {
             Debug.WriteLine("Database count...");
-            QueryDefinition queryDefinition = new QueryDefinition($"SELECT VALUE COUNT(1) FROM c WHERE STARTSWITH(c.type, '{type}') AND c.name LIKE '{search}%'");
+            QueryDefinition queryDefinition = new QueryDefinition($"SELECT VALUE COUNT(1) FROM c WHERE STARTSWITH(c.path, '{path}') AND c.name LIKE '{search}%'");
             FeedIterator<int> queryResultSetIterator = products.GetItemQueryIterator<int>(queryDefinition);
             List<int> items = new List<int>();
-                        
+            
             while (queryResultSetIterator.HasMoreResults)
             {
                 FeedResponse<int> currentResultSet = await queryResultSetIterator.ReadNextAsync();
@@ -244,7 +246,7 @@ namespace CosmosDBData
 
         }
 
-        public async Task<IEnumerable<string>> GetTypes()
+        public async Task<IEnumerable<string>> GetPaths()
         {
             Debug.WriteLine("getting types from database...");
             QueryDefinition queryDefinition = new QueryDefinition($"SELECT * FROM c");
@@ -256,14 +258,14 @@ namespace CosmosDBData
                 FeedResponse<ProductDTO> currentResultSet = await queryResultSetIterator.ReadNextAsync();
                 foreach (ProductDTO product in currentResultSet)
                 {
-                    items.Add(product.Type);                    
+                    items.Add(product.Path);                    
                 }
             }
             return items;
         }
 
 
-        public async Task<IEnumerable<ProductDTO>> GetProducts(string type, string search, ProductSorting sorting, int offset, int limit)
+        public async Task<IEnumerable<ProductDTO>> GetProducts(string path, string search, ProductSorting sorting, int offset, int limit)
         {
             Debug.WriteLine("Getting products from database...");  // todo watch for extra calls to db
             string order = "";
@@ -284,7 +286,7 @@ namespace CosmosDBData
             }            
                                     
             // todo maybe change search from like to contains
-            QueryDefinition queryDefinition = new QueryDefinition($"SELECT * FROM c WHERE STARTSWITH(c.type, '{type}') AND c.name LIKE '{search}%' {order} OFFSET {offset} LIMIT {limit}");
+            QueryDefinition queryDefinition = new QueryDefinition($"SELECT * FROM c WHERE STARTSWITH(c.path, '{path}') AND c.name LIKE '{search}%' {order} OFFSET {offset} LIMIT {limit}");
             FeedIterator<ProductDTO> queryResultSetIterator = products.GetItemQueryIterator<ProductDTO>(queryDefinition);
             List<ProductDTO> items = new List<ProductDTO>();
 
@@ -299,6 +301,23 @@ namespace CosmosDBData
             return items;
         }
 
+        public async Task<T?> GetProduct<T>(string id)
+        {
+            Debug.WriteLine("getting single item from database..");
+
+            QueryDefinition queryDefinition = new QueryDefinition($"SELECT * FROM c WHERE c.id='{id}'");
+            FeedIterator<T> queryResultSetIterator = products.GetItemQueryIterator<T>(queryDefinition);
+
+            
+            if (queryResultSetIterator.HasMoreResults)
+            {
+                FeedResponse<T> currentResultSet = await queryResultSetIterator.ReadNextAsync();                
+                return currentResultSet.FirstOrDefault();                
+            }
+
+            return default(T);
+            
+        }
 
 
 
