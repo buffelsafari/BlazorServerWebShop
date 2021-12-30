@@ -207,16 +207,32 @@ namespace CosmosDBData
 
             for (int i = 0; i < 100; i++)
             {
-                
-                CreateProduct(container,
-                    new KeyValuePair<string, object>("type", $"{typeSeedList[rnd.Next(typeSeedList.Count)]}"),
-                    new KeyValuePair<string, object>("path", $"{pathSeedList[rnd.Next(pathSeedList.Count)]}/{pathSubSeedList1[rnd.Next(pathSubSeedList1.Count)]}/{pathSubSeedList2[rnd.Next(pathSubSeedList2.Count)]}/{pathSubSeedList3[rnd.Next(pathSubSeedList3.Count)]}/"),
-                    new KeyValuePair<string, object>("name", $"{nameC1[rnd.Next(nameC1.Count)]}{nameC2[rnd.Next(nameC2.Count)]}{nameC3[rnd.Next(nameC3.Count)]}{nameC4[rnd.Next(nameC4.Count)]}{nameC5[rnd.Next(nameC5.Count)]}"),
-                    new KeyValuePair<string, object>("price", rnd.Next(1, 9999).ToString()),
-                    new KeyValuePair<string, object>("price_unit", unitC[rnd.Next(unitC.Count)]),
-                    new KeyValuePair<string, object>("image", imageC[rnd.Next(imageC.Count)])
+                Dictionary<string, Object> dic = new Dictionary<string, Object>();
+                string type = $"{typeSeedList[rnd.Next(typeSeedList.Count)]}";
 
-                ).Wait();
+                dic.Add("type", type);
+                dic.Add("path", $"{pathSeedList[rnd.Next(pathSeedList.Count)]}/{pathSubSeedList1[rnd.Next(pathSubSeedList1.Count)]}/{pathSubSeedList2[rnd.Next(pathSubSeedList2.Count)]}/{pathSubSeedList3[rnd.Next(pathSubSeedList3.Count)]}/");
+                dic.Add("name", $"{nameC1[rnd.Next(nameC1.Count)]}{nameC2[rnd.Next(nameC2.Count)]}{nameC3[rnd.Next(nameC3.Count)]}{nameC4[rnd.Next(nameC4.Count)]}{nameC5[rnd.Next(nameC5.Count)]}");
+                dic.Add("price", rnd.Next(1, 9999).ToString());
+                dic.Add("price_unit", unitC[rnd.Next(unitC.Count)]);
+                dic.Add("image", imageC[rnd.Next(imageC.Count)]);
+
+                switch (type)
+                {
+                    case "tool":
+                        break;
+                    case "furniture":
+                        break;
+                    case "food":
+                        break;
+                    case "apperal":
+                        dic.Add("color_options", new string[] { "red", "green", "blue" });
+                        break;
+
+                }
+
+
+                CreateProduct(container, dic).Wait();
 
             }          
 
@@ -225,7 +241,7 @@ namespace CosmosDBData
         }
 
 
-        private async Task CreateProduct(Container container, params KeyValuePair<string, Object>[] parameters)
+        private async Task CreateProduct(Container container, Dictionary<string, Object> parameters)
         {
 
             ExpandoObject obj = new ExpandoObject();

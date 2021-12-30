@@ -16,6 +16,21 @@
     <span>@product.Path</span><br>
     <span>@product.Price</span><br>
     <span>@product.PriceUnit</span><br>
+
+    @if (product is ApperalProductDTO)
+    {
+        <label for="colors">Choose a color:</label>
+
+        <select @bind=@color>  
+            @foreach (var item in ((ApperalProductDTO)product).ColorOptions)
+            {
+                 <option value="@item">@item</option>   
+            }
+        </select>
+        
+    }
+
+    <span>selected color: @color</span>
 }
 
 @code 
@@ -26,8 +41,9 @@
     [Parameter]
     public string? Type { get; set; }
 
+    private string? color;
 
-    private AbstractBaseProductDTO? product { get; set; }
+    private AbstractBaseProductDTO? product; 
 
     protected override async Task OnParametersSetAsync()
     {
