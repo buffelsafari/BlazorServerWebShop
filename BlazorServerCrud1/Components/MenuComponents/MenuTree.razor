@@ -1,15 +1,22 @@
 ﻿
 
 
-<div class="nav-item px-3" @onclick="()=>expand = !expand">
-    <NavLink class="nav-link" href=@(Root.Link) >
-        <span class="oi oi-list-rich" aria-hidden="true"></span>@Root.Name
+<div class="nav-item px-3" >
+    
+    @if (Root.Children.Count != 0)
+    {
+        <span class="oi oi-list-rich" style="color:yellow;"  @onclick="()=>expand = !expand"></span>
+    }
+
+    <NavLink href=@(Root.Link) >
+        @Root.Name
     </NavLink>
 </div>
 
 
-<div style="margin-left:20px; color:yellow;" >
 
+
+<div style="margin-left:20px;" >
     @if (expand)
     {
         @foreach (MenuNode node in Root.Children)

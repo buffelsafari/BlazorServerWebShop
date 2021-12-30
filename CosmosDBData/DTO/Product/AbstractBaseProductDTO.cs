@@ -5,13 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CosmosDBService.DTO
+namespace CosmosDBService.DTO.Product
 {
-    public class ProductDTO
+    public abstract class AbstractBaseProductDTO
     {
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
-        
+
+        [JsonProperty(PropertyName = "type")]
+        public string Type { get; set; }
+
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
         

@@ -1,6 +1,6 @@
 ﻿using BlazorServerCrud1.Components.PaginatorComponent;
 using CosmosDBData;
-using CosmosDBService.DTO;
+using CosmosDBService.DTO.Product;
 using Microsoft.AspNetCore.Components;
 using System.Diagnostics;
 
@@ -48,7 +48,7 @@ namespace BlazorServerCrud1.Pages
 
 
         [Parameter]
-        public IEnumerable<ProductDTO> Items { get; set; } = new List<ProductDTO>();
+        public IEnumerable<ProductCardDTO> Items { get; set; } = new List<ProductCardDTO>();
 
 
         private string? _path;
@@ -101,38 +101,9 @@ namespace BlazorServerCrud1.Pages
             
             PaginatorCallback?.Invoke(SelectedPage, await Count(typeCombo));
 
-            Items = await cosmosDB.GetProducts<ProductDTO>(typeCombo, SearchWord != null ? SearchWord : "", ProductSorting.name, offset: SelectedPage*ItemsPerPage, limit: ItemsPerPage);
+            Items = await cosmosDB.GetProducts<ProductCardDTO>(typeCombo, SearchWord != null ? SearchWord : "", ProductSorting.name, offset: SelectedPage*ItemsPerPage, limit: ItemsPerPage);
 
-            //Items = productsDTO.Select(p => 
-            //    new ProductModel
-            //    {
-            //        Id=p.Id,
-            //        Name=p.Name,
-            //        Path=p.Path,
-            //        Price=p.Price,
-            //        PriceUnit=p.PriceUnit,
-            //        Image=p.Image,
-            //    });
-
-            //Items = new List<ProductModel>();
-            //foreach (ProductDTO p in productsDTO)
-            //{
-            //    Items.Add(new ProductModel
-            //    {
-            //        Id = p.Id,
-            //        Name = p.Name,
-            //        Type = p.Type,
-            //        Price = p.Price,
-            //        PriceUnit = p.PriceUnit,
-            //    });
-            //}
-
-
-            // await
             
-
-
-            //StateHasChanged();
             
 
         }

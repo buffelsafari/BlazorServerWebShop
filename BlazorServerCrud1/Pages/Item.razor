@@ -1,25 +1,36 @@
-﻿@page "/Item/{Id}"
+﻿@page "/Item/type0/{Id}"
 
 @using CosmosDBData
-@using CosmosDBService.DTO
+@using CosmosDBService.DTO.Product
 
 @inject ICosmosDBContext cosmosDB;
 
 
 <h3>Item @Id</h3>
-@name
+@if (product != null)
+{
+    <span>@product.Id</span><br>
+    <span>@product.Type</span><br>
+    <span>@product.Image</span><br>
+    <span>@product.Name</span><br>
+    <span>@product.Path</span><br>
+    <span>@product.Price</span><br>
+    <span>@product.PriceUnit</span><br>
+}
 
 @code 
 {
     [Parameter]
     public string? Id { get; set; }
 
-    private string? name;
+    
+
+    private AbstractBaseProductDTO? product { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
-        var product=await cosmosDB.GetProduct<ProductDTO>(Id);
-        name = product.Name;
+        product=await cosmosDB.GetProduct<ProductCardDTO>(Id);
+        
 
         await base.OnParametersSetAsync();
 

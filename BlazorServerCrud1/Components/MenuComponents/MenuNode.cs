@@ -7,6 +7,7 @@ namespace BlazorServerCrud1.Components.MenuComponents
     public class MenuNode  // todo put somewhere else
     {
         public string? Name { get; set; }
+        public string? Type { get; set; }
         public string Link
         {
             get 
@@ -22,7 +23,7 @@ namespace BlazorServerCrud1.Components.MenuComponents
 
         public MenuNode(string name, MenuNode? parent)
         {
-            Name = name;
+            Name = name;            
             Parent = parent;
         }
 

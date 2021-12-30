@@ -6,13 +6,21 @@
     
 </div>
 
+
+
+
+
+
 @code 
 {
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
     [Parameter]
-    public string Name { get; set; }
+    public string? Name { get; set; }
+
+    [Parameter]
+    public string? Type { get; set; }
 
 
     [Parameter(CaptureUnmatchedValues = true)]
@@ -21,9 +29,9 @@
     protected void OnClick()
     {
         object? id;
-        if (AdditionalAttributes.TryGetValue("id", out id))
+        if (AdditionalAttributes!=null && AdditionalAttributes.TryGetValue("id", out id))
         {
-            NavManager.NavigateTo($"/Item/{id}");
+            NavManager.NavigateTo($"/Item/{Type}/{id}");
         }
     }
 }

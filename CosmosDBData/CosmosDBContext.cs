@@ -1,4 +1,4 @@
-﻿using CosmosDBService.DTO;
+﻿using CosmosDBService.DTO.Product;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Documents.Client;
 using System;
@@ -62,7 +62,7 @@ namespace CosmosDBData
             container = db.CreateContainerIfNotExistsAsync(containerProperties).Result;
 
             
-            List<string> typeSeedList = new List<string>()
+            List<string> pathSeedList = new List<string>()
             {
                 "Alpha",                
                 "Beta",
@@ -70,21 +70,21 @@ namespace CosmosDBData
                 "Delta",
             };
 
-            List<string> typeSubSeedList1 = new List<string>()
+            List<string> pathSubSeedList1 = new List<string>()
             {
                 "VitaminA",
                 "VitaminB",
                 "VitaminC",                
             };
 
-            List<string> typeSubSeedList2 = new List<string>()
+            List<string> pathSubSeedList2 = new List<string>()
             {
                 "Dog",
                 "Cat",
                 "Rabbit",
             };
 
-            List<string> typeSubSeedList3 = new List<string>()
+            List<string> pathSubSeedList3 = new List<string>()
             {
                 "Rock",
                 "Paper",
@@ -199,8 +199,9 @@ namespace CosmosDBData
             for (int i = 0; i < 100; i++)
             {
                 CreateProduct(
-                    container, 
-                    $"{typeSeedList[rnd.Next(typeSeedList.Count)]}/{typeSubSeedList1[rnd.Next(typeSubSeedList1.Count)]}/{typeSubSeedList2[rnd.Next(typeSubSeedList2.Count)]}/{typeSubSeedList3[rnd.Next(typeSubSeedList3.Count)]}/",
+                    container,
+                    "Type0",
+                    $"{pathSeedList[rnd.Next(pathSeedList.Count)]}/{pathSubSeedList1[rnd.Next(pathSubSeedList1.Count)]}/{pathSubSeedList2[rnd.Next(pathSubSeedList2.Count)]}/{pathSubSeedList3[rnd.Next(pathSubSeedList3.Count)]}/",
                     $"{nameC1[rnd.Next(nameC1.Count)]}{nameC2[rnd.Next(nameC2.Count)]}{nameC3[rnd.Next(nameC3.Count)]}{nameC4[rnd.Next(nameC4.Count)]}{nameC5[rnd.Next(nameC5.Count)]}", 
                     rnd.Next(1, 9999).ToString(),
                     unitC[rnd.Next(unitC.Count)],
@@ -214,12 +215,13 @@ namespace CosmosDBData
         
 
 
-        private async Task CreateProduct(Container container, string path, string name, string price, string priceUnit, string image)
+        private async Task CreateProduct(Container container, string type, string path, string name, string price, string priceUnit, string image)
         {
             
-            await container.CreateItemAsync<ProductDTO>(new ProductDTO
+            await container.CreateItemAsync<ProductCardDTO>(new ProductCardDTO
             {
                 Id = Guid.NewGuid().ToString(),
+                Type=type,
                 Path = path,
                 Name = name,
                 Price = price,
@@ -250,13 +252,13 @@ namespace CosmosDBData
         {
             Debug.WriteLine("getting types from database...");
             QueryDefinition queryDefinition = new QueryDefinition($"SELECT * FROM c");
-            FeedIterator<ProductDTO> queryResultSetIterator = products.GetItemQueryIterator<ProductDTO>(queryDefinition);
+            FeedIterator<ProductCardDTO> queryResultSetIterator = products.GetItemQueryIterator<ProductCardDTO>(queryDefinition);
             HashSet<string> items = new HashSet<string>();
 
             while (queryResultSetIterator.HasMoreResults)
             {
-                FeedResponse<ProductDTO> currentResultSet = await queryResultSetIterator.ReadNextAsync();
-                foreach (ProductDTO product in currentResultSet)
+                FeedResponse<ProductCardDTO> currentResultSet = await queryResultSetIterator.ReadNextAsync();
+                foreach (ProductCardDTO product in currentResultSet)
                 {
                     items.Add(product.Path);                    
                 }
