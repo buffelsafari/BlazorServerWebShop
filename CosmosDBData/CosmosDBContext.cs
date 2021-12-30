@@ -4,6 +4,7 @@ using Microsoft.Azure.Documents.Client;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,10 +62,18 @@ namespace CosmosDBData
             container.DeleteContainerAsync().Wait();
             container = db.CreateContainerIfNotExistsAsync(containerProperties).Result;
 
-            
+            List<string> typeSeedList = new List<string>()
+            {
+                "tool",
+                "furniture",
+                "food",
+                "apperal"
+            };
+
+
             List<string> pathSeedList = new List<string>()
             {
-                "Alpha",                
+                "Alpha",
                 "Beta",
                 "Gamma",
                 "Delta",
@@ -198,36 +207,65 @@ namespace CosmosDBData
 
             for (int i = 0; i < 100; i++)
             {
-                CreateProduct(
-                    container,
-                    "Type0",
-                    $"{pathSeedList[rnd.Next(pathSeedList.Count)]}/{pathSubSeedList1[rnd.Next(pathSubSeedList1.Count)]}/{pathSubSeedList2[rnd.Next(pathSubSeedList2.Count)]}/{pathSubSeedList3[rnd.Next(pathSubSeedList3.Count)]}/",
-                    $"{nameC1[rnd.Next(nameC1.Count)]}{nameC2[rnd.Next(nameC2.Count)]}{nameC3[rnd.Next(nameC3.Count)]}{nameC4[rnd.Next(nameC4.Count)]}{nameC5[rnd.Next(nameC5.Count)]}", 
-                    rnd.Next(1, 9999).ToString(),
-                    unitC[rnd.Next(unitC.Count)],
-                    imageC[rnd.Next(imageC.Count)]).Wait();
+                
+                CreateProduct(container,
+                    new KeyValuePair<string, object>("type", $"{typeSeedList[rnd.Next(typeSeedList.Count)]}"),
+                    new KeyValuePair<string, object>("path", $"{pathSeedList[rnd.Next(pathSeedList.Count)]}/{pathSubSeedList1[rnd.Next(pathSubSeedList1.Count)]}/{pathSubSeedList2[rnd.Next(pathSubSeedList2.Count)]}/{pathSubSeedList3[rnd.Next(pathSubSeedList3.Count)]}/"),
+                    new KeyValuePair<string, object>("name", $"{nameC1[rnd.Next(nameC1.Count)]}{nameC2[rnd.Next(nameC2.Count)]}{nameC3[rnd.Next(nameC3.Count)]}{nameC4[rnd.Next(nameC4.Count)]}{nameC5[rnd.Next(nameC5.Count)]}"),
+                    new KeyValuePair<string, object>("price", rnd.Next(1, 9999).ToString()),
+                    new KeyValuePair<string, object>("price_unit", unitC[rnd.Next(unitC.Count)]),
+                    new KeyValuePair<string, object>("image", imageC[rnd.Next(imageC.Count)])
+
+                ).Wait();
+
             }          
 
             
                         
         }
 
-        
 
+        private async Task CreateProduct(Container container, params KeyValuePair<string, Object>[] parameters)
+        {
+
+            ExpandoObject obj = new ExpandoObject();
+             
+            obj.TryAdd("id", Guid.NewGuid().ToString());
+            obj.TryAdd("created", DateTime.UtcNow.ToString());            
+
+            foreach (KeyValuePair<string, object> kvp in parameters)
+            {
+                obj.TryAdd(kvp.Key, kvp.Value);                
+            }
+
+            await container.CreateItemAsync(obj);
+        }
 
         private async Task CreateProduct(Container container, string type, string path, string name, string price, string priceUnit, string image)
         {
-            
-            await container.CreateItemAsync<ProductCardDTO>(new ProductCardDTO
+            var annoymous = new 
             {
-                Id = Guid.NewGuid().ToString(),
-                Type=type,
-                Path = path,
-                Name = name,
-                Price = price,
-                PriceUnit = priceUnit,
-                Image= image,
-            });
+                id = Guid.NewGuid().ToString(),
+                type = type,
+                path = path,
+                name = name,
+                price = price,
+                price_unit = priceUnit,
+                image = image,
+            };
+
+            await container.CreateItemAsync(annoymous);
+
+            //await container.CreateItemAsync<ProductCardDTO>(new ProductCardDTO
+            //{
+            //    Id = Guid.NewGuid().ToString(),
+            //    Type=type,
+            //    Path = path,
+            //    Name = name,
+            //    Price = price,
+            //    PriceUnit = priceUnit,
+            //    Image= image,
+            //});
         }   
 
         

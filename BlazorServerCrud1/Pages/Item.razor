@@ -1,4 +1,4 @@
-﻿@page "/Item/type0/{Id}"
+﻿@page "/Item/{Type}/{Id}"
 
 @using CosmosDBData
 @using CosmosDBService.DTO.Product
@@ -23,13 +23,36 @@
     [Parameter]
     public string? Id { get; set; }
 
-    
+    [Parameter]
+    public string? Type { get; set; }
+
 
     private AbstractBaseProductDTO? product { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
-        product=await cosmosDB.GetProduct<ProductCardDTO>(Id);
+        switch (Type)
+        {
+            case "tool":
+                product=await cosmosDB.GetProduct<ToolProductDTO>(Id);
+                break;
+            case "furniture":
+                product=await cosmosDB.GetProduct<FurnitureProductDTO>(Id);
+                break;
+            case "food":
+                product=await cosmosDB.GetProduct<FoodProductDTO>(Id);
+                break;
+            case "apperal":
+                product=await cosmosDB.GetProduct<ApperalProductDTO>(Id);
+                break;
+            default:
+                product=await cosmosDB.GetProduct<ProductCardDTO>(Id);
+                break;
+
+        }
+
+
+        
         
 
         await base.OnParametersSetAsync();
