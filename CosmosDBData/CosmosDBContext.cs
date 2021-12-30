@@ -321,7 +321,7 @@ namespace CosmosDBData
         }
 
 
-        public async Task<IEnumerable<T>> GetProducts<T>(string path, string search, ProductSorting sorting, int offset, int limit)
+        public async IAsyncEnumerable<T> GetProducts<T>(string path, string search, ProductSorting sorting, int offset, int limit)
         {
             Debug.WriteLine("Getting products from database...");  // todo watch for extra calls to db
             string order = "";
@@ -351,10 +351,13 @@ namespace CosmosDBData
                 FeedResponse<T> currentResultSet = await queryResultSetIterator.ReadNextAsync();
                 foreach (T product in currentResultSet)
                 {
-                    items.Add(product);                    
+                    Task.Delay(300).Wait();  // for test
+
+                    //items.Add(product);
+                    yield return product;
                 }
             }
-            return items;
+            //return items;
         }
 
         public async Task<T?> GetProduct<T>(string id)

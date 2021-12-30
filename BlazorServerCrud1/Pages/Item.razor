@@ -6,6 +6,7 @@
 @inject ICosmosDBContext cosmosDB;
 
 
+
 <h3>Item @Id</h3>
 @if (product != null)
 {
@@ -30,7 +31,7 @@
         
     }
 
-    <span>selected color: @color</span>
+    <span>selected: @color</span>
 }
 
 @code 
@@ -41,12 +42,14 @@
     [Parameter]
     public string? Type { get; set; }
 
+    
     private string? color;
 
     private AbstractBaseProductDTO? product; 
 
     protected override async Task OnParametersSetAsync()
     {
+        
         switch (Type)
         {
             case "tool":

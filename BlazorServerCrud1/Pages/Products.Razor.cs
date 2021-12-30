@@ -48,7 +48,10 @@ namespace BlazorServerCrud1.Pages
 
 
         [Parameter]
-        public IEnumerable<ProductCardDTO> Items { get; set; } = new List<ProductCardDTO>();
+        public List<ProductCardDTO> Items { get; set; } =new List<ProductCardDTO>();
+
+        //[Parameter]
+        //public IAsyncEnumerable<ProductCardDTO> ItemsAsync { get; set; }
 
 
         private string? _path;
@@ -101,10 +104,18 @@ namespace BlazorServerCrud1.Pages
             
             PaginatorCallback?.Invoke(SelectedPage, await Count(typeCombo));
 
-            Items = await cosmosDB.GetProducts<ProductCardDTO>(typeCombo, SearchWord != null ? SearchWord : "", ProductSorting.name, offset: SelectedPage*ItemsPerPage, limit: ItemsPerPage);
+            //ItemsAsync= cosmosDB.GetProducts<ProductCardDTO>(typeCombo, SearchWord != null ? SearchWord : "", ProductSorting.name, offset: SelectedPage*ItemsPerPage, limit: ItemsPerPage);
 
-            
-            
+
+            // todo experiment with async collections
+            Items.Clear();
+            await foreach (var v in cosmosDB.GetProducts<ProductCardDTO>(typeCombo, SearchWord != null ? SearchWord : "", ProductSorting.name, offset: SelectedPage * ItemsPerPage, limit: ItemsPerPage))
+            {
+                ((List<ProductCardDTO>)Items).Add(v);
+                StateHasChanged();
+            }
+
+
 
         }
 
