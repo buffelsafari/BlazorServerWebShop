@@ -6,6 +6,7 @@
 @using CosmosDBData
 @using BlazorServerCrud1.Components.ProductComponents
 @using BlazorServerCrud1.Components.PaginatorComponent
+@using System.Diagnostics
 
 @inject ICosmosDBContext cosmosDB;
 
@@ -15,7 +16,7 @@
 
 
 
-
+<button @onclick='()=>{tokenSource.Cancel();Debug.WriteLine("Cancel");}' >cancel</button>
 
                      
       
@@ -25,7 +26,8 @@
     <div class="row">
 @foreach (var product in Items)
 {
-  
+    
+
     <ProductCard id=@product.Id class="product-card" Name=@product.Name Type=@product.Type>
         <ProductImage Image=@product.Image style="height:50%; text-align:center;">
 

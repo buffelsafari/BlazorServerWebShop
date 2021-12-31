@@ -10,7 +10,7 @@ namespace CosmosDBData
     public interface ICosmosDBContext
     {
         
-        IAsyncEnumerable<T> GetProducts<T>(string path, string search, ProductSorting sorting, int offset, int limit);
+        IAsyncEnumerable<T> GetProducts<T>(string path, string search, ProductSorting sorting, int offset, int limit, CancellationToken cancellationToken = default);
         Task<int> ValueSQLCount(string path, string search);
         Task<IEnumerable<string>> GetPaths();
         Task<T?> GetProduct<T>(string id);

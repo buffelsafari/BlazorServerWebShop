@@ -4,12 +4,13 @@ using CosmosDBService.DTO.Product;
 using Microsoft.AspNetCore.Components;
 using System.Diagnostics;
 
+
 namespace BlazorServerCrud1.Pages
 {
 
 
 
-    public partial class Products : ComponentBase
+    public partial class Products : ComponentBase, IDisposable
     {
         //[CascadingParameter]
         //public PaginatorParam? PaginatorCascade { get; set; }
@@ -50,13 +51,13 @@ namespace BlazorServerCrud1.Pages
         [Parameter]
         public List<ProductCardDTO> Items { get; set; } =new List<ProductCardDTO>();
 
-        //[Parameter]
-        //public IAsyncEnumerable<ProductCardDTO> ItemsAsync { get; set; }
+        [Parameter]
+        public IAsyncEnumerable<ProductCardDTO> ItemsAsync { get; set; }
 
 
         private string? _path;
 
-        
+        private CancellationTokenSource tokenSource;
 
 
         protected override Task OnInitializedAsync()
@@ -75,10 +76,10 @@ namespace BlazorServerCrud1.Pages
 
         protected async override Task OnParametersSetAsync()
         {
-
-            await base.OnParametersSetAsync();
-
             
+            tokenSource?.Cancel();
+            tokenSource = new CancellationTokenSource();
+
 
             if (Path != _path)  // todo detect search changes
             {
@@ -104,21 +105,40 @@ namespace BlazorServerCrud1.Pages
             
             PaginatorCallback?.Invoke(SelectedPage, await Count(typeCombo));
 
-            //ItemsAsync= cosmosDB.GetProducts<ProductCardDTO>(typeCombo, SearchWord != null ? SearchWord : "", ProductSorting.name, offset: SelectedPage*ItemsPerPage, limit: ItemsPerPage);
+            
+            
 
+            await Task.Run(()=>GetCardData(typeCombo, tokenSource.Token), tokenSource.Token);
 
-            // todo experiment with async collections
-            Items.Clear();
-            await foreach (var v in cosmosDB.GetProducts<ProductCardDTO>(typeCombo, SearchWord != null ? SearchWord : "", ProductSorting.name, offset: SelectedPage * ItemsPerPage, limit: ItemsPerPage))
-            {
-                ((List<ProductCardDTO>)Items).Add(v);
-                StateHasChanged();
-            }
+            
+            
 
-
-
+            await base.OnParametersSetAsync();
         }
 
+        
+
+
+        private async Task GetCardData(string typeCombo, CancellationToken token)
+        {
+            Items.Clear();
+            await foreach (var v in cosmosDB.GetProducts<ProductCardDTO>(typeCombo, SearchWord != null ? SearchWord : "", ProductSorting.name, offset: SelectedPage * ItemsPerPage, limit: ItemsPerPage, token))
+            {
+                if (!token.IsCancellationRequested)
+                {
+                    await InvokeAsync(() =>
+                    {
+                        Items?.Add(v);
+                        StateHasChanged();
+                    });
+                }
+
+                
+                //StateHasChanged();
+                Debug.WriteLine("hello from other Task");
+            }
+
+        }
         
 
         private Task<int> Count(string path)
@@ -128,12 +148,11 @@ namespace BlazorServerCrud1.Pages
 
         
 
-
-
-
-
-
-
-
+        public void Dispose()
+        {
+            tokenSource?.Cancel();
+            tokenSource?.Dispose();
+            
+        }
     }
 }

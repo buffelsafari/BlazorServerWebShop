@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,9 +21,9 @@ namespace CosmosDBData
         
     }
 
+
+
     
-
-
     public class CosmosDBContext:ICosmosDBContext
     {
         
@@ -320,8 +321,8 @@ namespace CosmosDBData
             return items;
         }
 
-
-        public async IAsyncEnumerable<T> GetProducts<T>(string path, string search, ProductSorting sorting, int offset, int limit)
+        
+        public async IAsyncEnumerable<T> GetProducts<T>(string path, string search, ProductSorting sorting, int offset, int limit, [EnumeratorCancellation] CancellationToken cancellationToken=default)
         {
             Debug.WriteLine("Getting products from database...");  // todo watch for extra calls to db
             string order = "";
@@ -344,20 +345,23 @@ namespace CosmosDBData
             // todo maybe change search from like to contains
             QueryDefinition queryDefinition = new QueryDefinition($"SELECT * FROM c WHERE STARTSWITH(c.path, '{path}') AND c.name LIKE '{search}%' {order} OFFSET {offset} LIMIT {limit}");
             FeedIterator<T> queryResultSetIterator = products.GetItemQueryIterator<T>(queryDefinition);
-            List<T> items = new List<T>();
+            //List<T> items = new List<T>();
 
             while (queryResultSetIterator.HasMoreResults)
             {
-                FeedResponse<T> currentResultSet = await queryResultSetIterator.ReadNextAsync();
-                foreach (T product in currentResultSet)
+                //FeedResponse<T> currentResultSet = await ;
+                foreach (var product in await queryResultSetIterator.ReadNextAsync(cancellationToken))
                 {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        break;
+                    }                    
                     Task.Delay(300).Wait();  // for test
-
-                    //items.Add(product);
+                                        
                     yield return product;
                 }
             }
-            //return items;
+            
         }
 
         public async Task<T?> GetProduct<T>(string id)
