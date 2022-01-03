@@ -132,10 +132,6 @@ namespace BlazorServerCrud1.Pages
                         StateHasChanged();
                     });
                 }
-
-                
-                //StateHasChanged();
-                Debug.WriteLine("hello from other Task");
             }
 
         }

@@ -1,7 +1,9 @@
 ﻿@page "/Item/{Type}/{Id}"
 
+@using BlazorServerCrud1.Components.CarouselComponent
 @using CosmosDBData
 @using CosmosDBService.DTO.Product
+
 
 @inject ICosmosDBContext cosmosDB;
 
@@ -10,6 +12,12 @@
 <h3>Item @Id</h3>
 @if (product != null)
 {
+    <Carousel Images=img>
+        <div>--hello--</div>
+        <div>--world--</div>
+    </Carousel>
+
+
     <span>@product.Id</span><br>
     <span>@product.Type</span><br>
     <span>@product.Image</span><br>
@@ -42,7 +50,8 @@
     [Parameter]
     public string? Type { get; set; }
 
-    
+    private string[] img = { "/images/ananas.jpg", "/images/atlas.jpg", "/images/buffel.jpg", "/images/cyckel.jpg", "/images/dator.jpg", "/images/eggs.jpg", "/images/el.jpg", "/images/humidor.jpg", "/images/ost.jpg", "/images/queenph.png", "/images/skinka.jpg" }; 
+
     private string? color;
 
     private AbstractBaseProductDTO? product; 

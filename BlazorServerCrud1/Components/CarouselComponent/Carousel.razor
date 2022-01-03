@@ -1,0 +1,61 @@
+﻿@using System.Diagnostics
+@using Microsoft.AspNetCore.Components.Rendering
+<h3>Carousel</h3>
+
+
+@*width: 100vw;
+ position: relative;
+ margin-left: -50vw;
+ height: 100px;
+ margin-top: 100px;
+ left: 50%;*@
+
+
+<div class="container m-0 p-0" style="height:@(height); width:@(width); max-width:@(max_width); overflow-x:scroll;overflow-y:hidden; scroll-snap-type:x mandatory;">
+    @if (Images != null)
+    {
+        <nobr>
+            
+            <div style="float:left; width:@(width);">
+
+                
+            @foreach (var img in Images)
+            {
+                
+                <img src=@img style="object-fit:contain; max-width:@(width); min-width:@(width); max-height:@(height); scroll-snap-align:start;">
+                
+            }
+            
+                
+            </div>
+                
+        </nobr>
+    }
+    
+    
+</div>
+<a href="#humidor.jpg">link</a>
+<br>
+
+
+
+<div>
+@ChildContent
+</div>
+
+@code 
+{
+    private string width="100%";
+    private string height="500px";
+    private string max_width = "600px";
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public IEnumerable<string>? Images { get; set; }
+
+   
+    
+
+}
