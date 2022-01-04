@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CosmosDBService.DTO.Product
 {
-    public class ToolProductDTO:AbstractBaseProductDTO
+    public class ToolProductDTO:BaseDetailedProductDTO
     {
     }
 }

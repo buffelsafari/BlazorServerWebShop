@@ -1,0 +1,30 @@
+﻿
+@if (Options != null)
+{    
+    @ChildContent
+    <select @bind=@Selected>  
+        <option value="" selected disabled hidden>---</option>
+        @foreach (var item in Options)
+        {
+            <option value="@item">@item</option>
+        }
+    </select>
+}
+
+@code 
+{
+    [Parameter]
+    public IEnumerable<string>? Options { get; set; }
+
+    [Parameter]
+    public string? Selected { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    protected override Task OnParametersSetAsync()
+    {        
+        return base.OnParametersSetAsync();
+    }
+
+}

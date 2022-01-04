@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 
 namespace CosmosDBService.DTO.Product
 {
-    public class ApperalProductDTO:AbstractBaseProductDTO
+    public class ApperalProductDTO:BaseDetailedProductDTO
     {
         [JsonProperty(PropertyName = "color_options")]
         public IEnumerable<string>? ColorOptions { get; set; }
+
+        [JsonProperty(PropertyName = "size_options")]
+        public IEnumerable<string>? SizeOptions { get; set; }
     }
 }

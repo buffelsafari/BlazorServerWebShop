@@ -1,64 +1,108 @@
 ﻿@page "/Item/{Type}/{Id}"
 
 @using BlazorServerCrud1.Components.CarouselComponent
+@using BlazorServerCrud1.Components.ProductComponents
 @using CosmosDBData
 @using CosmosDBService.DTO.Product
+@using System.Reflection
+@using System.Text.Json.Nodes
+@using System.Diagnostics
+@using Newtonsoft.Json.Linq
+
 
 
 @inject ICosmosDBContext cosmosDB;
 
 
 
-<h3>Item @Id</h3>
+
 @if (product != null)
 {
-    <Carousel Images=img>
-        <div>--hello--</div>
-        <div>--world--</div>
-    </Carousel>
-
-
-    <span>@product.Id</span><br>
-    <span>@product.Type</span><br>
-    <span>@product.Image</span><br>
-    <span>@product.Name</span><br>
     <span>@product.Path</span><br>
+    <span>@product.Type</span><br>
+    <h1>Item @product.Name</h1>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-md-6 col-xl-5">
+                <Carousel Images=product.ProductImages></Carousel>
+            </div>
+            <div class="col-12 col-md-6 col-xl-4">
+                <h3>Description</h3>
+                <p>@product.Description</p>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+                <h3>Specifications</h3>
+                <ul>                    
+                @foreach (var spec in product.Specifications.Properties())
+                {
+                    <li>@spec.Name @spec.FirstOrDefault()</li>        
+                }
+                </ul>
+            </div>
+        </div>
+    </div>
     <span>@product.Price</span><br>
     <span>@product.PriceUnit</span><br>
 
+    
+    
+
+    
+    
+
     @if (product is ApperalProductDTO)
     {
-        <label for="colors">Choose a color:</label>
-
-        <select @bind=@color>  
-            @foreach (var item in ((ApperalProductDTO)product).ColorOptions)
-            {
-                 <option value="@item">@item</option>   
-            }
-        </select>
+        ApperalProductDTO apperal = (ApperalProductDTO)product;
+        
+        <ProductOption @ref=colorOptions Options=apperal.ColorOptions>
+            color:
+        </ProductOption>
+        
+        <ProductOption @ref=sizeOptions Options=apperal.SizeOptions>
+            size:
+        </ProductOption>
+        
+                
+        <br>
+        if (colorOptions != null)
+        {
+            <span>selected color: @colorOptions.Selected</span>
+        }
+        <br>
+        if (sizeOptions != null)
+        {
+            <span>selected color: @sizeOptions.Selected</span>
+        }
         
     }
 
-    <span>selected: @color</span>
+    <br>
+    <button @onclick=click> press me to update!</button>
+    
 }
 
 @code 
 {
+    private ProductOption? colorOptions;
+    private ProductOption? sizeOptions;
+
     [Parameter]
     public string? Id { get; set; }
 
     [Parameter]
     public string? Type { get; set; }
 
-    private string[] img = { "/images/ananas.jpg", "/images/atlas.jpg", "/images/buffel.jpg", "/images/cyckel.jpg", "/images/dator.jpg", "/images/eggs.jpg", "/images/el.jpg", "/images/humidor.jpg", "/images/ost.jpg", "/images/queenph.png", "/images/skinka.jpg" }; 
 
-    private string? color;
 
-    private AbstractBaseProductDTO? product; 
+    private string? size;
+
+    private BaseDetailedProductDTO? product; 
 
     protected override async Task OnParametersSetAsync()
     {
-        
+
+
         switch (Type)
         {
             case "tool":
@@ -71,10 +115,10 @@
                 product=await cosmosDB.GetProduct<FoodProductDTO>(Id);
                 break;
             case "apperal":
-                product=await cosmosDB.GetProduct<ApperalProductDTO>(Id);
+                product=await cosmosDB.GetProduct<ApperalProductDTO>(Id);                
                 break;
             default:
-                product=await cosmosDB.GetProduct<ProductCardDTO>(Id);
+                product=await cosmosDB.GetProduct<BaseDetailedProductDTO>(Id);
                 break;
 
         }
@@ -82,8 +126,18 @@
 
         
         
+        
+
+
 
         await base.OnParametersSetAsync();
 
+    }
+
+    
+
+    private void click()
+    {
+        StateHasChanged();
     }
 }

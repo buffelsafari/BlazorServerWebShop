@@ -202,6 +202,9 @@ namespace CosmosDBData
                 "images/trebuchet.jpg",                
             };
 
+            String descript = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
+            
 
             Random rnd = new Random();
                         
@@ -217,6 +220,11 @@ namespace CosmosDBData
                 dic.Add("price", rnd.Next(1, 9999).ToString());
                 dic.Add("price_unit", unitC[rnd.Next(unitC.Count)]);
                 dic.Add("image", imageC[rnd.Next(imageC.Count)]);
+                dic.Add("product_images", imageC);
+                dic.Add("description", descript);
+
+                dic.Add("specifications", new { height="123cm", width="243cm", wifi="v1", screen="lcd" });
+                
 
                 switch (type)
                 {
@@ -228,10 +236,9 @@ namespace CosmosDBData
                         break;
                     case "apperal":
                         dic.Add("color_options", new string[] { "red", "green", "blue" });
+                        dic.Add("size_options", new string[] { "small", "medium", "large"});
                         break;
-
                 }
-
 
                 CreateProduct(container, dic).Wait();
 
@@ -258,32 +265,33 @@ namespace CosmosDBData
             await container.CreateItemAsync(obj);
         }
 
-        private async Task CreateProduct(Container container, string type, string path, string name, string price, string priceUnit, string image)
-        {
-            var annoymous = new 
-            {
-                id = Guid.NewGuid().ToString(),
-                type = type,
-                path = path,
-                name = name,
-                price = price,
-                price_unit = priceUnit,
-                image = image,
-            };
+        //private async Task CreateProduct(Container container, string type, string path, string name, string price, string priceUnit, string image)
+        //{
+        //    var annoymous = new 
+        //    {
+        //        id = Guid.NewGuid().ToString(),
+        //        type = type,
+        //        path = path,
+        //        name = name,
+        //        price = price,
+        //        price_unit = priceUnit,
+        //        image = image,
+                
+        //    };
 
-            await container.CreateItemAsync(annoymous);
+        //    await container.CreateItemAsync(annoymous);
 
-            //await container.CreateItemAsync<ProductCardDTO>(new ProductCardDTO
-            //{
-            //    Id = Guid.NewGuid().ToString(),
-            //    Type=type,
-            //    Path = path,
-            //    Name = name,
-            //    Price = price,
-            //    PriceUnit = priceUnit,
-            //    Image= image,
-            //});
-        }   
+        //    //await container.CreateItemAsync<ProductCardDTO>(new ProductCardDTO
+        //    //{
+        //    //    Id = Guid.NewGuid().ToString(),
+        //    //    Type=type,
+        //    //    Path = path,
+        //    //    Name = name,
+        //    //    Price = price,
+        //    //    PriceUnit = priceUnit,
+        //    //    Image= image,
+        //    //});
+        //}   
 
         
 
