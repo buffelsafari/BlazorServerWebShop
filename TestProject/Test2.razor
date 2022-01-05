@@ -1,0 +1,33 @@
+﻿@using BlazorServerCrud1.Components.ProductComponents
+@using Bunit
+@inherits TestComponentBase
+
+<Fixture Test="Doit">
+    <ComponentUnderTest>
+        <ProductTitle>
+            hello world
+        </ProductTitle>
+    </ComponentUnderTest>
+    
+    @code
+    {
+        void Doit(Fixture fixture)
+        {
+            var cut = fixture.GetComponentUnderTest<ProductTitle>();
+
+            cut.MarkupMatches("<div>hello world</div>");
+        }
+    }
+
+
+</Fixture>
+
+
+<SnapshotTest Description="testing the tests">
+    <TestInput>
+        <ProductTitle>hello world</ProductTitle>
+    </TestInput>
+    <ExpectedOutput>
+        <div>hello world</div>
+    </ExpectedOutput>
+</SnapshotTest>
