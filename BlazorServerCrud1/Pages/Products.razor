@@ -9,48 +9,50 @@
 @using System.Diagnostics
 
 @inject ICosmosDBContext cosmosDB;
+@inject NavigationManager navManager;
 
 
+<Paginator OnSelectPage=OnSelectPage SelectedPage=selectedPage TotalNumberOfItems=@totalNumberOfItems ItemsPerPage=@itemsPerPage >
+    
 
-<h3>@SearchWord</h3>
+    <h3>@SearchWord</h3>
+    <h1>from query @Id</h1>
 
 
-
-<button @onclick='()=>{tokenSource.Cancel();Debug.WriteLine("Cancel");}' >cancel</button>
+    <button @onclick='()=>{tokenSource.Cancel();Debug.WriteLine("Cancel");}' >cancel</button>
 
                      
       
 
 
-<div class="container-fluid">
-    <div class="row">
-@foreach (var product in Items)
-{
+    <div class="container-fluid">
+        <div class="row">
+    @foreach (var product in Items)
+    {
     
 
-    <ProductCard id=@product.Id class="product-card" Name=@product.Name Type=@product.Type>
-        <ProductImage Image=@product.Image style="height:50%; text-align:center;">
+        <ProductCard id=@product.Id class="product-card" Name=@product.Name Type=@product.Type>
+            <ProductImage Image=@product.Image style="height:50%; text-align:center;">
 
-        </ProductImage>
+            </ProductImage>
         
-        <ProductTitle style="background-color:green;">
-            @product.Name           
+            <ProductTitle style="background-color:green;">
+                @product.Name           
 
-        </ProductTitle>
-        <ProductPrice>
-            @product.Price @product.PriceUnit
-        </ProductPrice> 
-        Type: @product.Type
-    </ProductCard>
+            </ProductTitle>
+            <ProductPrice>
+                @product.Price @product.PriceUnit
+            </ProductPrice> 
+            Type: @product.Type
+        </ProductCard>
           
     
-}
-</div>
-</div>
+    }
+    </div>
+    </div>
 
  
-
-
+</Paginator>
 
 
 
