@@ -32,12 +32,12 @@ namespace BlazorServerCrud1.Components.MenuComponents
             if (name == Name)
             {
                 string[] split = path.Split('/', 2);
-                Debug.WriteLine("name hit");
+                //Debug.WriteLine("name hit");
                 foreach (MenuNode child in Children)
                 {
                     if (child.Name == split[0])
                     {
-                        Debug.WriteLine("hit on childName");
+                        //Debug.WriteLine("hit on childName");
                         if (!String.IsNullOrEmpty(split[1]))
                         {
                             child.Add(split[0], split[1]);
@@ -47,7 +47,7 @@ namespace BlazorServerCrud1.Components.MenuComponents
                 }
                 
 
-                Debug.WriteLine("adding new child");
+                //Debug.WriteLine("adding new child");
                 MenuNode node = new MenuNode(split[0], this);                
                 Children.Add(node);
                 if (!String.IsNullOrEmpty(split[1]))

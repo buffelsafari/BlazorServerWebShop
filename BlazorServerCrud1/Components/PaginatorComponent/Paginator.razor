@@ -1,18 +1,31 @@
 ﻿@using System.Diagnostics
+@using BlazorServerCrud1.Data.Settings
+
+@inject ISettingsService settings;
+
 
 <div>
     @foreach(int item in ButtonItems)
     {
         if (item == SelectedPage)
         {
-            <button disabled>@(item+1)</button>
+            <button disabled>@(item)</button>
         }
         else
         {
-            <button @onclick="()=> OnClick(item)">@(item+1)</button>
+            <button @onclick="()=> OnClick(item)">@(item)</button>
         }
     }
     <span>items: @TotalNumberOfItems</span>
+
+
+    <select @onchange=OnChange>
+        <option value=@ItemsPerPage selected disabled hidden>@ItemsPerPage</option>
+        <option value=4 >4</option>
+        <option value=6 >6</option>
+        <option value=12 >12</option>
+        <option value=24 >24</option>
+    </select>
 
 </div>
 
@@ -23,7 +36,10 @@
 
     [Parameter]
     public EventCallback<int> OnSelectPage { get; set; }
-    
+
+    [Parameter]
+    public EventCallback<int> OnSelectPageSize { get; set; }
+
     [Parameter]
     public int SelectedPage { get; set; }
 
@@ -54,5 +70,14 @@
     {        
         await OnSelectPage.InvokeAsync(i);        
     }
-   
+
+    private async Task OnChange(ChangeEventArgs args)
+    {
+         
+        if (int.TryParse(args.Value!=null?args.Value.ToString():"-", out int v))
+        {
+            await OnSelectPageSize.InvokeAsync(v);
+        }
+    }
+
 }

@@ -1,22 +1,27 @@
-﻿
-@page "/products/{Path?}/{SubPath1?}/{SubPath2?}/{SubPath3?}"
+﻿@page "/products/{*Path}"
+
+@*@page "/products/{Path?}/{SubPath1?}/{SubPath2?}/{SubPath3?}"*@
 
 
 
+@using BlazorServerCrud1.Data.Settings
 @using CosmosDBData
 @using BlazorServerCrud1.Components.ProductComponents
 @using BlazorServerCrud1.Components.PaginatorComponent
 @using System.Diagnostics
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 
 @inject ICosmosDBContext cosmosDB;
 @inject NavigationManager navManager;
+@inject ISettingsService settings;
+@inject ProtectedLocalStorage localStorage;
 
 
-<Paginator OnSelectPage=OnSelectPage SelectedPage=selectedPage TotalNumberOfItems=@totalNumberOfItems ItemsPerPage=@itemsPerPage >
+<Paginator OnSelectPage=OnSelectPage OnSelectPageSize=OnSelectPageSize SelectedPage=SelectedPage TotalNumberOfItems=totalNumberOfItems ItemsPerPage=ItemsPerPage >
     
 
     <h3>@SearchWord</h3>
-    <h1>from query @Id</h1>
+    
 
 
     <button @onclick='()=>{tokenSource.Cancel();Debug.WriteLine("Cancel");}' >cancel</button>

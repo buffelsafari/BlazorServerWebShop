@@ -1,5 +1,6 @@
 using BlazorServerCrud1.Areas.Identity;
 using BlazorServerCrud1.Data;
+using BlazorServerCrud1.Data.Settings;
 using CosmosDBData;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -21,8 +22,10 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
 builder.Services.AddSingleton<WeatherForecastService>();
-
+builder.Services.AddSingleton<ISettingsService, SettingsService>();
 builder.Services.AddSingleton<ICosmosDBContext, CosmosDBContext>();
+
+
 
 var app = builder.Build();
 
@@ -40,6 +43,7 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
 
 app.UseHttpsRedirection();
 

@@ -2,8 +2,12 @@
 using CosmosDBData;
 using CosmosDBService.DTO.Product;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Diagnostics;
+using System.Linq;
+
 
 
 namespace BlazorServerCrud1.Pages
@@ -17,30 +21,25 @@ namespace BlazorServerCrud1.Pages
         [CascadingParameter]
         public string? SearchWord { get; set; }
 
+        [Parameter]
+        [SupplyParameterFromQuery(Name = "size")]
+        public int ItemsPerPage { get; set; }        
         
-        private int itemsPerPage=10;        
-        private int selectedPage = 0;        
+        [Parameter]
+        [SupplyParameterFromQuery(Name = "page")]
+        public int SelectedPage { get; set; }        
+        
         private int totalNumberOfItems;
-        private string totalPath="";
+        //private string totalPath="";
+        private string? oldPath = "";
 
 
-        [Parameter]
-        [SupplyParameterFromQuery(Name ="id")]
-        public int? Id { get; set; } = null;
         
 
         [Parameter]
-        public string? Path { get; set; }
+        public string? Path { get; set; } = "";
 
-        [Parameter]
-        public string? SubPath1 { get; set; }
-
-        [Parameter]
-        public string? SubPath2 { get; set; }
-
-        [Parameter]
-        public string? SubPath3 { get; set; }
-
+        
 
 
 
@@ -56,50 +55,59 @@ namespace BlazorServerCrud1.Pages
         private CancellationTokenSource? tokenSource;
 
 
-        protected override Task OnInitializedAsync()
+        protected async override Task OnInitializedAsync()
         {
-            
+            navManager.LocationChanged += OnLocChange;
 
-            //SelectedPage = 0;
-            //_path = Path;
+            var result = await localStorage.GetAsync<int>("ItemsPerPage");
+            ItemsPerPage = result.Success ? result.Value : settings.DefaultItemsPerPage;
 
-
-
-            return base.OnInitializedAsync();
+            await base.OnInitializedAsync();
 
         }
 
+        private void OnLocChange(object? sender, LocationChangedEventArgs e)
+        {
+            string str = navManager.ToBaseRelativePath(navManager.Uri);
+            Debug.WriteLine("location changed:"+ str);
+            
+        }
 
         protected async override Task OnParametersSetAsync()
         {
             
 
+            if (ItemsPerPage < 1)
+            { 
+                ItemsPerPage = 12;
+            }
+
 
             Debug.WriteLine("on parameter set");
 
-            totalPath = Path != null ? Path + "/" : "";
-            totalPath += SubPath1 != null ? SubPath1 + "/" : "";
-            totalPath += SubPath2 != null ? SubPath2 + "/" : "";
-            totalPath += SubPath3 != null ? SubPath3 + "/" : "";
+                       
+            
+
+            if (Path != oldPath)
+            {
+                SelectedPage = 0;
+                totalNumberOfItems = await Count(Path);
+            }
+
+            oldPath = Path;
 
 
-            Debug.WriteLine(navManager.BaseUri.ToString());
-
-            IReadOnlyDictionary<string, object?> dict = new Dictionary<string, object?>();
-            string str = navManager.GetUriWithQueryParameters("/products/"+totalPath, dict);
-            navManager.NavigateTo(str);
+            
 
 
-
-
-
-
-
-
-            totalNumberOfItems = await Count(totalPath);
+            
 
             await GetCardData();
+
+
+
             
+
 
             await base.OnParametersSetAsync();
         }
@@ -115,7 +123,7 @@ namespace BlazorServerCrud1.Pages
             tokenSource?.Cancel();
             tokenSource?.Dispose();
             tokenSource = new CancellationTokenSource();
-            await Task.Run(() => GetCardData(totalPath, tokenSource.Token), tokenSource.Token);
+            await Task.Run(() => GetCardData(Path, tokenSource.Token), tokenSource.Token);
 
         }
 
@@ -125,7 +133,7 @@ namespace BlazorServerCrud1.Pages
         {            
 
             Items.Clear();
-            await foreach (var v in cosmosDB.GetProducts<ProductCardDTO>(path, SearchWord != null ? SearchWord : "", ProductSorting.name, offset: selectedPage * itemsPerPage, limit: itemsPerPage, token))
+            await foreach (var v in cosmosDB.GetProducts<ProductCardDTO>(path, SearchWord != null ? SearchWord : "", ProductSorting.name, offset: SelectedPage * ItemsPerPage, limit: ItemsPerPage, token))
             {
                 if (!token.IsCancellationRequested)
                 {
@@ -156,11 +164,24 @@ namespace BlazorServerCrud1.Pages
 
         public async Task OnSelectPage(int i)
         {            
-            selectedPage = i;            
-            
-            
+            SelectedPage = i;
+            navManager.NavigateTo("/Products/"+Path + $"?page={SelectedPage}&size={ItemsPerPage}");
+
             await GetCardData();
             
         }
+
+        public async Task OnSelectPageSize(int i)
+        {
+            await localStorage.SetAsync("ItemsPerPage", i);
+
+            ItemsPerPage = i;
+            SelectedPage = 0;
+            navManager.NavigateTo("/Products/" + Path + $"?page={SelectedPage}&size={ItemsPerPage}");
+
+            await GetCardData();
+
+        }
+
     }
 }
