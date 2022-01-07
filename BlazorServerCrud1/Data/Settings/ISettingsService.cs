@@ -2,8 +2,9 @@
 {
     public interface ISettingsService
     {
-        string Name { get; }
-        int ItemsPerPage { get; set; }
+        string Name { get; }        
         int DefaultItemsPerPage { get; }
+
+        IEnumerable<int> PageSizes { get; }
     }
 }

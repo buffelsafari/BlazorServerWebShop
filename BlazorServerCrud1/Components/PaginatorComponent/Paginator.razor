@@ -20,11 +20,11 @@
 
 
     <select @onchange=OnChange>
-        <option value=@ItemsPerPage selected disabled hidden>@ItemsPerPage</option>
-        <option value=4 >4</option>
-        <option value=6 >6</option>
-        <option value=12 >12</option>
-        <option value=24 >24</option>
+        <option value=@ItemsPerPage selected disabled hidden>@ItemsPerPage</option>        
+        @foreach(int i in @settings.PageSizes)
+        {
+            <option value=@i>@i</option>
+        }
     </select>
 
 </div>

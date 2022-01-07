@@ -1,5 +1,6 @@
 {
   "name": "Bettans bageri",
-  "default_items_per_page": 5
+  "default_items_per_page": 5,
+  "page_sizes": [5, 10, 20, 40]
     
 }
