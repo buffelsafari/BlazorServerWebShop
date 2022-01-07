@@ -2,8 +2,13 @@
 
 @using BlazorServerCrud1.Components
 @using BlazorServerCrud1.Components.ProductComponents
+@using BlazorServerCrud1.Data.Messages
 @using CosmosDBData
 @inject ICosmosDBContext cosmosDB;
+@inject IMessageService messageService;
+
+@implements IMessageSubscriber;
+
 
 
 <PageTitle>Index</PageTitle>
@@ -14,9 +19,10 @@ Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
 
-<img src='~/images/queenph.png' />
-
-<img src="images/queenph.png">
+<form @onsubmit=@Submit>
+<input type="text" @bind-value=sendit />
+</form>
+<H1>message:@message</H1>
 
 
 

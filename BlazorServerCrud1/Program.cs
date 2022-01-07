@@ -1,5 +1,6 @@
 using BlazorServerCrud1.Areas.Identity;
 using BlazorServerCrud1.Data;
+using BlazorServerCrud1.Data.Messages;
 using BlazorServerCrud1.Data.Settings;
 using CosmosDBData;
 using Microsoft.AspNetCore.Components;
@@ -24,6 +25,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuth
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSingleton<ISettingsService, SettingsService>();
 builder.Services.AddSingleton<ICosmosDBContext, CosmosDBContext>();
+builder.Services.AddSingleton<IMessageService, MessageService>();
 
 
 

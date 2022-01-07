@@ -57,6 +57,8 @@ namespace BlazorServerCrud1.Pages
 
         protected async override Task OnInitializedAsync()
         {
+            // todo unsubscribe?, memory leakage?
+            navManager.LocationChanged -= OnLocChange;
             navManager.LocationChanged += OnLocChange;
 
             var result = await localStorage.GetAsync<int>("ItemsPerPage");
@@ -157,6 +159,8 @@ namespace BlazorServerCrud1.Pages
 
         public void Dispose()
         {
+            navManager.LocationChanged -= OnLocChange;
+
             tokenSource?.Cancel();
             tokenSource?.Dispose();
             
