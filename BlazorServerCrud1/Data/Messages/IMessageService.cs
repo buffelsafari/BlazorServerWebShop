@@ -8,7 +8,7 @@
         
         bool UnSubscribe(Guid id, IMessageSubscriber subscriber);
 
-        public void Send(string message);
+        public void Send(Message message);
 
 
     }

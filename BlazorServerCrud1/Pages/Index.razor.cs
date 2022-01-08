@@ -17,6 +17,9 @@ namespace BlazorServerCrud1.Pages
         [Parameter]
         public string? message { get; set; }
 
+        [Parameter]
+        public List<string> Chat { get; set; } = new List<string>();
+
         public string? sendit { get; set; }
 
         private Guid subscriberId = Guid.NewGuid();
@@ -46,28 +49,18 @@ namespace BlazorServerCrud1.Pages
 
         private void Submit()
         {
-            messageService.Send(sendit);
+            messageService.Send(new Message 
+            { 
+                Id=Guid.NewGuid(),
+                SenderId=subscriberId,
+                Created=DateTime.Now,
+                Title="TestMessage",
+                Text=sendit
+            
+            });
         }
 
-        //private void Enter(KeyboardEventArgs args)
-        //{
-        //    if (args.Code == "Enter" || args.Code == "NumpadEnter")
-        //    {
-        //        messageService.Send(sendit);
-        //    }
-        //}
-
-        //private void OnMessage(object? sender, string msg)
-        //{ 
-        //    Debug.WriteLine("message"+msg);
-        //    InvokeAsync(() => 
-        //    {
-        //        message=msg;
-        //        StateHasChanged();
-        //    });
-            
-            
-        //}
+        
 
 
         public void Dispose()
@@ -82,6 +75,7 @@ namespace BlazorServerCrud1.Pages
             InvokeAsync(() =>
             {
                 message = msg;
+                Chat.Add(msg);
                 StateHasChanged();
             });
         }

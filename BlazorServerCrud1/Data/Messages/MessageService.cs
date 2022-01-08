@@ -31,12 +31,12 @@ namespace BlazorServerCrud1.Data.Messages
             return false;
         }
                 
-        public void Send(string message)
+        public void Send(Message message)
         {
             foreach (KeyValuePair<Guid, IMessageSubscriber> sub in subscribers)
             {
                 Debug.WriteLine(sub.Key);
-                sub.Value.OnMessage(message);
+                sub.Value.OnMessage(message.Text);
             }
 
             //OnMessage?.Invoke(this, message);

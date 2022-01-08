@@ -40,14 +40,14 @@ namespace BlazorServerCrud1.Pages
         public string? Path { get; set; } = "";
 
         
-
+        private int pageSize=12;
 
 
         [Parameter]
         public List<ProductCardDTO> Items { get; set; } =new List<ProductCardDTO>();
 
-        [Parameter]
-        public IAsyncEnumerable<ProductCardDTO>? ItemsAsync { get; set; }
+        //[Parameter]
+        //public IAsyncEnumerable<ProductCardDTO>? ItemsAsync { get; set; }
 
 
         
@@ -57,12 +57,12 @@ namespace BlazorServerCrud1.Pages
 
         protected async override Task OnInitializedAsync()
         {
-            // todo unsubscribe?, memory leakage?
-            navManager.LocationChanged -= OnLocChange;
+                      
             navManager.LocationChanged += OnLocChange;
 
             var result = await localStorage.GetAsync<int>("ItemsPerPage");
-            ItemsPerPage = result.Success ? result.Value : settings.DefaultItemsPerPage;
+            pageSize = result.Success ? result.Value : settings.DefaultItemsPerPage;
+            
 
             await base.OnInitializedAsync();
 
@@ -72,6 +72,8 @@ namespace BlazorServerCrud1.Pages
         {
             string str = navManager.ToBaseRelativePath(navManager.Uri);
             Debug.WriteLine("location changed:"+ str);
+
+            
             
         }
 
@@ -80,8 +82,10 @@ namespace BlazorServerCrud1.Pages
             
 
             if (ItemsPerPage < 1)
-            { 
-                ItemsPerPage = 12;
+            {   
+                // todo something
+                ItemsPerPage = 3;
+                
             }
 
 
@@ -135,7 +139,7 @@ namespace BlazorServerCrud1.Pages
         {            
 
             Items.Clear();
-            await foreach (var v in cosmosDB.GetProducts<ProductCardDTO>(path, SearchWord != null ? SearchWord : "", ProductSorting.name, offset: SelectedPage * ItemsPerPage, limit: ItemsPerPage, token))
+            await foreach (var v in cosmosDB.GetProducts<ProductCardDTO>(path, SearchWord != null ? SearchWord : "", ProductSorting.name, offset: SelectedPage * pageSize, limit: pageSize, token))
             {
                 if (!token.IsCancellationRequested)
                 {
@@ -167,22 +171,26 @@ namespace BlazorServerCrud1.Pages
         }
 
         public async Task OnSelectPage(int i)
-        {            
+        {
+            
             SelectedPage = i;
-            navManager.NavigateTo("/Products/"+Path + $"?page={SelectedPage}&size={ItemsPerPage}");
+            navManager.NavigateTo("/Products/"+Path + $"?page={SelectedPage}&size={pageSize}");
+
+                
+            
 
             await GetCardData();
-            
+
         }
 
         public async Task OnSelectPageSize(int i)
         {
             await localStorage.SetAsync("ItemsPerPage", i);
-
-            ItemsPerPage = i;
+            
+            pageSize = i;
             SelectedPage = 0;
-            navManager.NavigateTo("/Products/" + Path + $"?page={SelectedPage}&size={ItemsPerPage}");
-
+            navManager.NavigateTo("/Products/" + Path + $"?page={SelectedPage}&size={pageSize}");
+            
             await GetCardData();
 
         }
